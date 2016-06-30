@@ -56,5 +56,8 @@
     <ClCompile Include="base\Enum.cpp">
       <Filter>ソース ファイル\base</Filter>
     </ClCompile>
+    <ClCompile Include="base\Win32Utils.cpp">
+      <Filter>ソース ファイル\base</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

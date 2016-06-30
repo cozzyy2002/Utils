@@ -23,10 +23,10 @@ ULONG CUnknownImpl::ReleaseImpl(void)
 	return refCount;
 }
 
-HRESULT hrCheck(HRESULT exp, LPCTSTR expStr)
+HRESULT hrCheck(HRESULT exp, LPCTSTR expStr, LPCTSTR src, int line)
 {
 	if (FAILED(exp)) {
-		_ftprintf_p(stderr, _T("%s faild: 0x%08lx\n"), expStr, exp);
+		_ftprintf_p(stderr, _T("%s faild: 0x%08lx at:\n%s(%d)\n"), expStr, exp, src, line);
 	}
 	return exp;
 }

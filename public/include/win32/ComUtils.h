@@ -28,9 +28,12 @@ protected:
 	LONG m_refCount;
 };
 
-#define HR_ASSERT(exp, hr) do { HRESULT _hr = (exp) ? S_OK : hr; if(FAILED(_hr)) return hrCheck(_hr, _T(#exp)); } while(0)
-#define HR_ASSERT_OK(exp) do { HRESULT _hr = exp; if(FAILED(_hr)) return hrCheck(_hr, _T(#exp)); } while(0)
-#define HR_EXPECT(exp, hr) hrCheck((exp) ? S_OK : hr, _T(#exp))
-#define HR_EXPECT_OK(exp) hrCheck(exp, _T(#exp))
+#define HR_ASSERT(exp, hr) do { HRESULT _hr = HR_EXPECT(exp, hr); if(FAILED(_hr)) return _hr; } while(0)
+#define HR_ASSERT_OK(exp) do { HRESULT _hr = HR_EXPECT_OK(exp); if(FAILED(_hr)) return _hr; } while(0)
+#define HR_EXPECT(exp, hr) hrCheck((exp) ? S_OK : hr, _T(#exp), _T(__FILE__), __LINE__)
+#define HR_EXPECT_OK(exp) hrCheck(exp, _T(#exp), _T(__FILE__), __LINE__)
 
-HRESULT hrCheck(HRESULT expre, LPCTSTR exprStr);
+#define WIN32_ASSERT(exp) HR_ASSERT(exp, HRESULT_FROM_WIN32(GetLastError()))
+#define WIN32_EXPECT(exp) HR_EXPECT(exp, HRESULT_FROM_WIN32(GetLastError()))
+
+HRESULT hrCheck(HRESULT expre, LPCTSTR exprStr, LPCTSTR src, int line);
