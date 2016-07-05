@@ -6,7 +6,16 @@
 
 #if !defined(TYPEDEF_CSafeHandle)
 
-class CSafeHandle {
+class CNoneCopyable {
+protected:
+	CNoneCopyable() {}
+
+private:
+	CNoneCopyable(const CNoneCopyable&);
+	CNoneCopyable& operator=(CNoneCopyable&);
+};
+
+class CSafeHandle : CNoneCopyable {
 public:
 	CSafeHandle(HANDLE h = NULL) : m_handle(h) {}
 
@@ -22,6 +31,46 @@ public:
 
 protected:
 	std::unique_ptr<HANDLE, Deleter> m_handle;
+};
+
+/**
+	Safe handle class that duplicat another handle.
+
+	Copy constructor and = operator can accept CCopyableSafeHandle object created in the other process.
+	This object can be used only in the process that created the object,
+	except used as source of copy constructor or = operator.
+*/
+template<
+	DWORD	dwDesiredAccess = 0,
+	BOOL	bInheritHandle = FALSE,
+	DWORD	dwOptions = DUPLICATE_SAME_ACCESS
+>
+class CCopyableSafeHandle : public CSafeHandle {
+public:
+	CCopyableSafeHandle(HANDLE h = NULL)
+		: CSafeHandle(h)
+		, m_process(GetCurrentProcess()) {}
+
+	CCopyableSafeHandle(const CCopyableSafeHandle& other)
+		: m_process(GetCurrentProcess()) { *this = other; }
+
+	CCopyableSafeHandle& operator=(const CCopyableSafeHandle& other)
+	{
+		HANDLE handle;
+		HRESULT hr = WIN32_EXPECT(
+			DuplicateHandle(other.m_process, other, m_process, &handle,
+				dwDesiredAccess, bInheritHandle, dwOptions)
+		);
+		if (SUCCEEDED(hr)) {
+			m_handle.reset(handle);
+		}
+
+		return *this;
+	}
+
+protected:
+	// Process handle in which this object is created.
+	CSafeHandle m_process;
 };
 
 #else

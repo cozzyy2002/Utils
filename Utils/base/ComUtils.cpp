@@ -4,6 +4,8 @@
 
 #pragma comment(lib, "Shlwapi.lib")
 
+static log4cplus::Logger logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("Utils.ComUtils"));
+
 HRESULT CUnknownImpl::QueryInterfaceImpl(REFIID riid, void ** ppvObject)
 {
 	static const QITAB qitab[] = { {0} };
@@ -26,7 +28,10 @@ ULONG CUnknownImpl::ReleaseImpl(void)
 HRESULT hrCheck(HRESULT exp, LPCTSTR expStr, LPCTSTR src, int line)
 {
 	if (FAILED(exp)) {
-		_ftprintf_p(stderr, _T("%s faild: 0x%08lx at:\n%s(%d)\n"), expStr, exp, src, line);
+		LOG4CPLUS_ERROR(logger, 
+			expStr << _T(" failed. HRESULT=0x") << std::hex << exp
+			<< _T(" at:\n") << src << _T("(") << std::dec << line << _T(")"));
+		//_ftprintf_p(stderr, _T("%s faild: 0x%08lx at:\n%s(%d)\n"), expStr, exp, src, line);
 	}
 	return exp;
 }
