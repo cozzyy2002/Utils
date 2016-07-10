@@ -19,6 +19,7 @@ class CSafeHandle : CNoneCopyable {
 public:
 	CSafeHandle(HANDLE h = NULL) : m_handle(h) {}
 
+	void reset(HANDLE h = NULL) { m_handle.reset(h); }
 	operator HANDLE() const { return m_handle.get(); }
 
 	bool isValid() const { return isValid(m_handle.get()); }
@@ -86,3 +87,11 @@ struct HandleDeleter {
 typedef std::unique_ptr<HANDLE, HandleDeleter> CSafeHandle;
 
 #endif
+
+// Deleter to set value
+template<typename T, T V>
+struct ValueDeleleter { void operator()(T* p) { *p = V; } };
+
+// Smart pointers to set bool value at destruction
+template<typename T, T V>
+using CSafeValue = std::unique_ptr<T, ValueDeleleter<T, V>>;
