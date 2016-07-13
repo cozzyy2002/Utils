@@ -34,6 +34,11 @@ protected:
 	std::unique_ptr<HANDLE, Deleter> m_handle;
 };
 
+class CSafeEventHandle : public CSafeHandle {
+public:
+	CSafeEventHandle(BOOL manualReset = TRUE, BOOL initialState = FALSE, LPCTSTR name = NULL);
+};
+
 /**
 	Safe handle class that duplicat another handle.
 
