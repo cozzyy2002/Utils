@@ -15,12 +15,15 @@ HRESULT CUnknownImpl::QueryInterfaceImpl(REFIID riid, void ** ppvObject)
 
 ULONG CUnknownImpl::AddRefImpl(void)
 {
-	return InterlockedIncrement(&m_refCount);
+	LONG refCount = InterlockedIncrement(&m_refCount);
+	LOG4CPLUS_DEBUG(logger, typeid(*this).name() << "::AddRef(). ref counf=" << refCount);
+	return refCount;
 }
 
 ULONG CUnknownImpl::ReleaseImpl(void)
 {
 	LONG refCount = InterlockedDecrement(&m_refCount);
+	LOG4CPLUS_DEBUG(logger, typeid(*this).name() << "::Release(). ref counf=" << refCount);
 	if (refCount == 0) delete this;
 	return refCount;
 }
