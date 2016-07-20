@@ -9,7 +9,7 @@
 	STDMETHODIMP_(ULONG) AddRef(void) { return CUnknownImpl::AddRefImpl(); }						\
 	STDMETHODIMP_(ULONG) Release(void) { return CUnknownImpl::ReleaseImpl(); }
 
-class CUnknownImpl : public IUnknown {
+class CUnknownImpl {
 public:
 	CUnknownImpl() : m_refCount(0) {}
 	virtual ~CUnknownImpl() {}
