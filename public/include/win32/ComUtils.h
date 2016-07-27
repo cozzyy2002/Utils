@@ -36,4 +36,7 @@ protected:
 #define WIN32_ASSERT(exp) HR_ASSERT(exp, HRESULT_FROM_WIN32(GetLastError()))
 #define WIN32_EXPECT(exp) HR_EXPECT(exp, HRESULT_FROM_WIN32(GetLastError()))
 
+#define HR_FAIL(exp, hr) return hrCheck(hr, _T(#exp), _T(__FILE__), __LINE__)
+#define WIN32_FAIL(exp, error) return hrCheck(HRESULT_FROM_WIN32(error), _T(#exp), _T(__FILE__), __LINE__)
+
 HRESULT hrCheck(HRESULT expre, LPCTSTR exprStr, LPCTSTR src, int line);
