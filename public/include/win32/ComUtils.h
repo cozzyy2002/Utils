@@ -5,7 +5,7 @@
 
 #define IUNKNOWN_METHODS \
 	STDMETHODIMP QueryInterface(REFIID riid, _COM_Outptr_ void __RPC_FAR *__RPC_FAR * ppvObject)	\
-				{ return CUnknownImpl::QueryInterfaceImpl(riid, ppvObject); }						\
+				{ return CUnknownImpl::QueryInterfaceImpl(this, riid, ppvObject); }					\
 	STDMETHODIMP_(ULONG) AddRef(void) { return CUnknownImpl::AddRefImpl(); }						\
 	STDMETHODIMP_(ULONG) Release(void) { return CUnknownImpl::ReleaseImpl(); }
 
@@ -15,9 +15,18 @@ public:
 	virtual ~CUnknownImpl() {}
 
 protected:
+	template<class T>
 	HRESULT QueryInterfaceImpl(
+		T* _this,
 		/* [in] */ REFIID riid,
-		/* [iid_is][out] */ _COM_Outptr_ void __RPC_FAR *__RPC_FAR *ppvObject);
+		/* [iid_is][out] */ _COM_Outptr_ void __RPC_FAR *__RPC_FAR *ppvObject)
+	{
+		static const QITAB qitab[] = { QITABENT(T, IUnknown),{ 0 } };
+		const QITAB* pqitab = getQITAB();
+		HRESULT hr = QISearch(_this, pqitab ? pqitab : qitab, riid, ppvObject);
+
+		return hr;
+	}
 
 	ULONG AddRefImpl(void);
 

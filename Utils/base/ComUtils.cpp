@@ -6,13 +6,6 @@
 
 static log4cplus::Logger logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT("Utils.ComUtils"));
 
-HRESULT CUnknownImpl::QueryInterfaceImpl(REFIID riid, void ** ppvObject)
-{
-	static const QITAB qitab[] = { {0} };
-	const QITAB* pqitab = getQITAB();
-	return QISearch(this, pqitab ? pqitab : qitab, riid, ppvObject);
-}
-
 ULONG CUnknownImpl::AddRefImpl(void)
 {
 	LONG refCount = InterlockedIncrement(&m_refCount);
