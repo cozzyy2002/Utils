@@ -36,3 +36,5 @@ Release
 *.opendb
 *.db
 *.user
+/Log.log
+/log4cplus.properties
