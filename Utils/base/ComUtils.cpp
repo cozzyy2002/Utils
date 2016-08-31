@@ -9,16 +9,24 @@ static log4cplus::Logger logger = log4cplus::Logger::getInstance(LOG4CPLUS_TEXT(
 ULONG CUnknownImpl::AddRefImpl(void)
 {
 	LONG refCount = InterlockedIncrement(&m_refCount);
-	LOG4CPLUS_DEBUG(logger, typeid(*this).name() << "::AddRef(). ref counf=" << refCount);
+	LOG4CPLUS_DEBUG_FMT(logger, _T("%s::AddRef(). ref counf=%d"), getName(), refCount);
 	return refCount;
 }
 
 ULONG CUnknownImpl::ReleaseImpl(void)
 {
 	LONG refCount = InterlockedDecrement(&m_refCount);
-	LOG4CPLUS_DEBUG(logger, typeid(*this).name() << "::Release(). ref counf=" << refCount);
+	LOG4CPLUS_DEBUG_FMT(logger, _T("%s::Release(). ref counf=%d"), getName(), refCount);
 	if (refCount == 0) delete this;
 	return refCount;
+}
+
+LPCTSTR CUnknownImpl::getName()
+{
+	if (!m_name) {
+		m_name.reset(new CA2T(typeid(*this).name()));
+	}
+	return (LPCTSTR)*m_name;
 }
 
 HRESULT hrCheck(HRESULT exp, LPCTSTR expStr, LPCTSTR src, int line)

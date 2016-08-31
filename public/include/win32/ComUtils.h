@@ -35,6 +35,9 @@ protected:
 protected:
 	virtual const QITAB* getQITAB() const { return NULL; }
 	LONG m_refCount;
+
+	LPCTSTR getName();
+	std::unique_ptr<CA2T> m_name;
 };
 
 #define HR_ASSERT(exp, hr) do { HRESULT _hr = HR_EXPECT(exp, hr); if(FAILED(_hr)) return _hr; } while(0)
